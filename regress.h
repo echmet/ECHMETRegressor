@@ -213,7 +213,7 @@ protected:
 	YTMatrix m_p;  //derivation matrix        [not_fixed, x]
 
 	// Non-resetable state variables
-	msize_t m_notFixed;
+	size_t m_notFixed;
 
 	/*!
 	 * Optional sanity check of the estimated parameters.
