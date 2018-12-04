@@ -181,14 +181,14 @@ public:
 
 	bool HasConverged() const;
 
-	msize_t GetNCount () const;
-	msize_t GetPCount () const; // 1
-	msize_t GetPTotal () const
+	size_t GetNCount () const;
+	size_t GetPCount () const; // 1
+	size_t GetPTotal () const
 	{
 		return this->m_params.size();
 	}
 
-	msize_t GetDF () const;
+	size_t GetDF () const;
 	YT GetMSE () const;
 	YT GetS2 () const;
 	YT GetS () const;
@@ -662,19 +662,19 @@ bool RegressFunction<XT, YT, NParams, IndexType>::HasConverged() const
 }
 
 template <typename XT, typename YT, size_t NParams, typename IndexType>
-msize_t RegressFunction<XT, YT, NParams, IndexType>::GetNCount() const
+size_t RegressFunction<XT, YT, NParams, IndexType>::GetNCount() const
 {
 	return m_y.rows();
 }
 
 template <typename XT, typename YT, size_t NParams, typename IndexType>
-msize_t RegressFunction<XT, YT, NParams, IndexType>::GetPCount() const
+size_t RegressFunction<XT, YT, NParams, IndexType>::GetPCount() const
 {
 	return m_notFixed;
 }
 
 template <typename XT, typename YT, size_t NParams, typename IndexType>
-msize_t RegressFunction<XT, YT, NParams, IndexType>::GetDF() const
+size_t RegressFunction<XT, YT, NParams, IndexType>::GetDF() const
 {
 	return GetNCount() - GetPCount();
 }
