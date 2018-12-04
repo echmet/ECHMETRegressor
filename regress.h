@@ -804,7 +804,7 @@ void RegressFunction<XT, YT, NParams, IndexType>::ACalculateP()
 	for (msize_t i = 0; i != m_notFixed; ++i) {
 		const IndexType pid = static_cast<const IndexType>(m_pindexes[i]);
 
-	msize_t xSize = static_cast<msize_t>(m_x.size());
+		msize_t xSize = static_cast<msize_t>(m_x.size());
 #ifndef ECHMET_REGRESS_DISABLE_OPENMP
 		#pragma omp parallel for schedule(static)
 #endif // ECHMET_REGRESS_DISABLE_OPENMP
