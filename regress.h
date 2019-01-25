@@ -190,8 +190,26 @@ public:
 
 	size_t GetDF () const;
 	YT GetMSE () const;
+	YT GetRSquared() const
+	{
+		return YT{1} - m_rss / GetSumSqaresTotal();
+	}
+
 	YT GetS2 () const;
 	YT GetS () const;
+	YT GetSumSqaresTotal() const
+	{
+		YT sum{0};
+		for (msize_t idx = 0; idx < m_y.size(); idx++)
+			sum += m_y[idx];
+		const YT average = sum / m_y.size();
+
+		YT ssTot{0};
+		for (msize_t idx = 0; idx < m_y.size(); idx++)
+			ssTot += std::pow(m_y[idx] - average, 2);
+
+		return ssTot;
+	}
 
 	//------------------------------------------------------------------------
 	// 1) Number of not fixed(!) parameters (those to be estimated)
