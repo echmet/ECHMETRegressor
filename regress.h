@@ -550,8 +550,19 @@ FINALIZE:
 
 		ECHMET_TRACE_T1(RegressTracing, MATRIX_ALPHA_FINAL, YT, std::cref(m_covariance));
 
+		/* Correction coefficient to make the estimator unbiased */
+		const YT coeff = YT{1} / (m_x.size() - m_notFixed);
+		YTVector sumSquares = m_y - m_fx;
+		for (int idx = 0; idx < sumSquares.size(); idx++)
+			sumSquares[idx] = sumSquares[idx] * sumSquares[idx];
+		YT ss = sumSquares.transpose() * sumSquares;
+		ss *= coeff;
+
 		m_covariance = m_covariance.inverse();
+		m_covariance *= ss;
+
 		ECHMET_TRACE_T1(RegressTracing, MATRIX_COVARIANCE, YT, std::cref(m_covariance));
+
 	}
 
 	Report();
