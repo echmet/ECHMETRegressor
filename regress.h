@@ -93,7 +93,32 @@ public:
 	void Report() const;
 	void UnregisterReportFunction();
 
-	YTVector GetVariances() const
+	YTVector GetVariancesScaled() const
+	{
+		/* Correction coefficient to make the estimator unbiased */
+		const YT coeff = YT{1} / (m_x.size() - m_notFixed);
+		YTVector sumSquares = m_y - m_fx;
+		for (typename YTVector::Index idx = 0; idx < sumSquares.size(); idx++)
+			sumSquares[idx] = sumSquares[idx] * sumSquares[idx];
+		YT ss = sumSquares.transpose() * sumSquares;
+		ss *= coeff;
+
+		const YTMatrix scaledCovars = m_covariance * ss;
+		YTVector variances(m_params.size());
+
+		typename YTMatrix::Index j = 0;
+		for (typename YTVector::Index i = 0; i < variances.size(); i++) {
+			if (!m_fixedParams[i]) {
+				variances(i) = scaledCovars(j, j);
+				j++;
+			} else
+				variances(i) = 0.0;
+		}
+
+		return variances;
+	}
+
+	YTVector GetVariancesUnscaled() const
 	{
 		YTVector variances(m_params.size());
 
@@ -550,17 +575,7 @@ FINALIZE:
 
 		ECHMET_TRACE_T1(RegressTracing, MATRIX_ALPHA_FINAL, YT, std::cref(m_covariance));
 
-		/* Correction coefficient to make the estimator unbiased */
-		const YT coeff = YT{1} / (m_x.size() - m_notFixed);
-		YTVector sumSquares = m_y - m_fx;
-		for (int idx = 0; idx < sumSquares.size(); idx++)
-			sumSquares[idx] = sumSquares[idx] * sumSquares[idx];
-		YT ss = sumSquares.transpose() * sumSquares;
-		ss *= coeff;
-
 		m_covariance = m_covariance.inverse();
-		m_covariance *= ss;
-
 		ECHMET_TRACE_T1(RegressTracing, MATRIX_COVARIANCE, YT, std::cref(m_covariance));
 
 	}
