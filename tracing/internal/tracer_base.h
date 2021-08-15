@@ -124,11 +124,11 @@ Tracer<TracepointIDs> & TRACER_INSTANCE();
 #ifndef ECHMET_TRACER_DISABLE_TRACING
 template <typename TracepointIDs, TracepointIDs TPID, typename... Args>
 inline
-void _ECHMET_TRACE(Args... args)
+void _ECHMET_TRACE(Args&& ...args)
 {
 	auto &tracer = TRACER_INSTANCE<TracepointIDs>();
 	if (tracer.isTracepointEnabled(TPID))
-		tracer.log(TracepointLogger<TracepointIDs, TPID>::call(args...));
+		tracer.log(TracepointLogger<TracepointIDs, TPID>::call(std::forward<Args>(args)...));
 	/* Do nothing */
 }
 
@@ -136,11 +136,11 @@ template <typename TracepointIDs, TracepointIDs TPID,
 	 typename T1,
 	 typename... Args>
 inline
-void _ECHMET_TRACE_T1(Args... args)
+void _ECHMET_TRACE_T1(Args&& ...args)
 {
 	auto &tracer = TRACER_INSTANCE<TracepointIDs>();
 	if (tracer.isTracepointEnabled(TPID))
-		tracer.log(TracepointLogger<TracepointIDs, TPID, T1>::call(args...));
+		tracer.log(TracepointLogger<TracepointIDs, TPID, T1>::call(std::forward<Args>(args)...));
 	/* Do nothing */
 }
 
@@ -148,11 +148,11 @@ template <typename TracepointIDs, TracepointIDs TPID,
 	  typename T1, typename T2,
 	  typename... Args>
 inline
-void _ECHMET_TRACE_T2(Args ...args)
+void _ECHMET_TRACE_T2(Args&& ...args)
 {
 	auto &tracer = TRACER_INSTANCE<TracepointIDs>();
 	if (tracer.isTracepointEnabled(TPID))
-		tracer.log(TracepointLogger<TracepointIDs, TPID, T1, T2>::call(args...));
+		tracer.log(TracepointLogger<TracepointIDs, TPID, T1, T2>::call(std::forward<Args>(args)...));
 	/* Do nothing */
 }
 
@@ -160,11 +160,11 @@ template <typename TracepointIDs, TracepointIDs TPID,
 	  typename T1, typename T2, typename T3,
 	  typename... Args>
 inline
-void _ECHMET_TRACE_T3(Args ...args)
+void _ECHMET_TRACE_T3(Args&& ...args)
 {
 	auto &tracer = TRACER_INSTANCE<TracepointIDs>();
 	if (tracer.isTracepointEnabled(TPID))
-		tracer.log(TracepointLogger<TracepointIDs, TPID, T1, T2, T3>::call(args...));
+		tracer.log(TracepointLogger<TracepointIDs, TPID, T1, T2, T3>::call(std::forward<Args>(args)...));
 	/* Do nothing */
 }
 
@@ -172,11 +172,11 @@ template <typename TracepointIDs, TracepointIDs TPID,
 	  typename T1, typename T2, typename T3, typename T4,
 	  typename... Args>
 inline
-void _ECHMET_TRACE_T4(Args ...args)
+void _ECHMET_TRACE_T4(Args&& ...args)
 {
 	auto &tracer = TRACER_INSTANCE<TracepointIDs>();
 	if (tracer.isTracepointEnabled(TPID))
-		tracer.log(TracepointLogger<TracepointIDs, TPID, T1, T2, T3, T4>::call(args...));
+		tracer.log(TracepointLogger<TracepointIDs, TPID, T1, T2, T3, T4>::call(std::forward<Args>(args)...));
 	/* Do nothing */
 }
 
@@ -184,11 +184,11 @@ template <typename TracepointIDs, TracepointIDs TPID,
 	  typename T1, typename T2, typename T3, typename T4, typename T5,
 	  typename... Args>
 inline
-void _ECHMET_TRACE_T5(Args ...args)
+void _ECHMET_TRACE_T5(Args&& ...args)
 {
 	auto &tracer = TRACER_INSTANCE<TracepointIDs>();
 	if (tracer.isTracepointEnabled(TPID))
-		tracer.log(TracepointLogger<TracepointIDs, TPID, T1, T2, T3, T4, T5>::call(args...));
+		tracer.log(TracepointLogger<TracepointIDs, TPID, T1, T2, T3, T4, T5>::call(std::forward<Args>(args)...));
 	/* Do nothing */
 }
 
@@ -197,27 +197,27 @@ void _ECHMET_TRACE_T5(Args ...args)
 #else
 template <typename TracepointIDs, TracepointIDs TPID, typename... Args>
 inline
-void _ECHMET_TRACE(Args ...) {} /* Do nothing */
+void _ECHMET_TRACE(Args&& ...) {} /* Do nothing */
 
 template <typename TracepointIDs, TracepointIDs TPID, typename... Args>
 inline
-void _ECHMET_TRACE_T1(Args ...) {} /* Do nothing */
+void _ECHMET_TRACE_T1(Args&& ...) {} /* Do nothing */
 
 template <typename TracepointIDs, TracepointIDs TPID, typename... Args>
 inline
-void _ECHMET_TRACE_T2(Args ...) {} /* Do nothing */
+void _ECHMET_TRACE_T2(Args&& ...) {} /* Do nothing */
 
 template <typename TracepointIDs, TracepointIDs TPID, typename... Args>
 inline
-void _ECHMET_TRACE_T3(Args ...) {} /* Do nothing */
+void _ECHMET_TRACE_T3(Args&& ...) {} /* Do nothing */
 
 template <typename TracepointIDs, TracepointIDs TPID, typename... Args>
 inline
-void _ECHMET_TRACE_T4(Args ...) {} /* Do nothing */
+void _ECHMET_TRACE_T4(Args&& ...) {} /* Do nothing */
 
 template <typename TracepointIDs, TracepointIDs TPID, typename... Args>
 inline
-void _ECHMET_TRACE_T5(Args ...) {} /* Do nothing */
+void _ECHMET_TRACE_T5(Args&& ...) {} /* Do nothing */
 
 #endif // ECHMET_TRACER_DISABLE_TRACING
 
