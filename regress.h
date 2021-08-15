@@ -627,7 +627,7 @@ void RegressFunction<XT, YT, NParams, IndexType>::FixParameter(const IndexType i
 template <typename XT, typename YT, size_t NParams, typename IndexType>
 void RegressFunction<XT, YT, NParams, IndexType>::FixParameterInternal(const PVSize idx)
 {
-	if (IsFixedParameter(idx))
+	if (IsFixedParameter(static_cast<IndexType>(idx)))
 		return;
 
 	assert(idx >= 0 && idx < m_fixedParams.size());
