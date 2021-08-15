@@ -71,6 +71,9 @@ public:
 	{
 		ParametrizationValidator<IndexType, NParams>();
 
+		for (auto &f : m_fixedParams)
+			f = false;
+
 		Reset();
 	}
 
