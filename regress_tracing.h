@@ -1,6 +1,7 @@
 #ifndef ECHMET_REGRESS_TRACING_H
 #define ECHMET_REGRESS_TRACING_H
 
+#include "ECHMETRegressor/tracing/internal/tracer_util.h"
 #include "regress_common.h"
 #include "tracing/regress_tracer_impl.h"
 
@@ -113,17 +114,18 @@ ECHMET_BEGIN_MAKE_LOGGER_T1(RegressTracing, MATRIX_DELTA, const RegressCore::Reg
 ECHMET_END_MAKE_LOGGER
 
 ECHMET_MAKE_TRACEPOINT(RegressTracing, REGRESS_STEP, "Regress step")
-ECHMET_BEGIN_MAKE_LOGGER_T1(RegressTracing, REGRESS_STEP, const T1 &sOld, const T1 &sNew, const T1 &sAccepted, const T1 &dS, const T1 &improvement)
+ECHMET_BEGIN_MAKE_LOGGER_T1(RegressTracing, REGRESS_STEP, const T1 &sOld, const T1 &sNew, const T1 &sAccepted, const T1 &dS, const T1 &improvement, const T1 &sInitial)
 {
 	std::stringstream ss{};
 
 	ss << RegressCore::MakeLogTitle("Regress step");
 
-	ss << "S new: " << sOld << "\n"
-           << "S old: " << sNew << "\n"
+	ss << "S old: " << sOld << "\n"
+           << "S new: " << sNew << "\n"
 	   << "S accepted: " << sAccepted << "\n"
 	   << "delta S: " << dS << "\n"
-	   << "Improvement: " << improvement;
+	   << "Improvement: " << improvement << "\n"
+	   << "S initial: " << sInitial;
 
 	ss << "\n\n";
 
@@ -228,7 +230,7 @@ ECHMET_BEGIN_MAKE_LOGGER_T1(RegressTracing, MATRIX_ALPHA_FINAL, const RegressCor
 }
 ECHMET_END_MAKE_LOGGER
 
-ECHMET_MAKE_TRACEPOINT(RegressTracing, MATRIX_COVARIANCE, "Final alpha atrix")
+ECHMET_MAKE_TRACEPOINT(RegressTracing, MATRIX_COVARIANCE, "Final alpha matrix")
 ECHMET_BEGIN_MAKE_LOGGER_T1(RegressTracing, MATRIX_COVARIANCE, const RegressCore::RegressMatrix<T1> &m)
 {
 	return RegressCore::LogMatrix("Covariance matrix", m).str();
@@ -241,6 +243,19 @@ ECHMET_BEGIN_MAKE_LOGGER(RegressTracing, ZERO_DF_MODE, const bool zeroDFmode)
 	if (zeroDFmode)
 		return "Using zero degrees-of-freedom mode";
 	return "Using normal degrees-of-freedom-mode";
+}
+ECHMET_END_MAKE_LOGGER
+
+ECHMET_MAKE_TRACEPOINT(RegressTracing, SANITY_CHECK_FAILURE, "Parameters sanity check failure")
+ECHMET_BEGIN_MAKE_LOGGER_T1(RegressTracing, SANITY_CHECK_FAILURE, const T1 &m)
+{
+	std::stringstream ss{};
+
+	ss << RegressCore::MakeLogTitle("Parameters failed sanity check");
+	ss << RegressCore::LogIterable("Vector of parameters", m).str();
+	ss << "\n\n";
+
+	return ss.str();
 }
 ECHMET_END_MAKE_LOGGER
 

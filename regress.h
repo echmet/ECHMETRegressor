@@ -3,6 +3,10 @@
 
 #include "regress_tracing.h"
 
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
+
 #include <cmath>
 #include <limits>
 #include <new>
@@ -446,6 +450,9 @@ bool RegressFunction<XT, YT, NParams, IndexType>::Regress()
 
 	Reset();
 
+	const YT sInitial = this->GetS();
+	const YT SQRT_TWO = YT(M_SQRT2);
+
 RESTART:
 	if (m_notFixed != 0)
 		m_improvement = -2. * m_epsilon; // 1)
@@ -461,24 +468,19 @@ RESTART:
 	YT sAccepted = this->GetS();
 	ParamsVector paramsAccepted(m_params);
 	const bool zeroDFMode = this->GetDF() == 0;
-	const auto continueFit = [this, zeroDFMode]() {
-		if (zeroDFMode)
-			return !m_accepted;
-		return std::abs(m_improvement) > m_epsilon;
-	};
 
 	ECHMET_TRACE(RegressTracing, ZERO_DF_MODE, zeroDFMode);
 
 	// DOIT
 
-	while (m_iterationCounter != m_nmax && continueFit() && !m_aborted) {
+	while (m_iterationCounter != m_nmax && !HasConverged() && !m_aborted) {
 		m_alpha = m_p * m_p.transpose();
 
 		if (m_damping) {
 			if (m_improvement < 0)
 				m_lambda *= m_lambdaCoeff;
 			else
-				m_lambda /= m_lambdaCoeff;
+				m_lambda /= std::sqrt(m_lambdaCoeff);
 
 			ECHMET_TRACE_T1(RegressTracing, LAMBDAS, YT, m_lambda, m_lambdaCoeff);
 
@@ -515,6 +517,7 @@ RESTART:
 
 		++m_iterationCounter;
 		if (!ACheckSanity(m_params)) {
+			ECHMET_TRACE_T1(RegressTracing, SANITY_CHECK_FAILURE, ParamsVector, m_params);
 			m_accepted = false;
 			goto FINALIZE;
 		}
@@ -524,9 +527,9 @@ RESTART:
 			OnParamsChanged(true);
 			YT sNew = this->GetS();
 			m_improvement = sOld - sNew;
-			m_accepted = sNew < sAccepted + m_epsilon;
+			m_accepted = (sNew < sAccepted + m_epsilon) && (sNew < sInitial);
 
-			ECHMET_TRACE_T1(RegressTracing, REGRESS_STEP, YT, sOld, sNew, sAccepted, sAccepted - sNew, m_improvement);
+			ECHMET_TRACE_T1(RegressTracing, REGRESS_STEP, YT, sOld, sNew, sAccepted, sAccepted - sNew, m_improvement, sInitial);
 
 			if (m_accepted) {
 				paramsAccepted = m_params;
@@ -545,14 +548,7 @@ RESTART:
 				paramsAccepted = m_params;
 		}
 
-		if (m_accepted) {
-			ECHMET_TRACE(RegressTracing, RESULT_ACCEPTANCE, true);
-
-		} else {
-			/* ECHMET_TRACE translates to nothing if tracing is disabled,
-			 * leave the enclosing braces here! */
-			ECHMET_TRACE(RegressTracing, RESULT_ACCEPTANCE, false);
-		}
+		ECHMET_TRACE(RegressTracing, RESULT_ACCEPTANCE, m_accepted);
 
 		Report();
 
@@ -567,7 +563,7 @@ FINALIZE:
 	if (!m_accepted && m_iterationCounter != m_nmax && !m_aborted) {
 		ECHMET_TRACE_NOARGS(RegressTracing, MARK_REGRESS_RESTART);
 
-		m_lambdaCoeff *= 2;
+		m_lambdaCoeff *= SQRT_TWO;
 
 		ECHMET_TRACE_T1(RegressTracing, LAMBDAS, YT, m_lambda, m_lambdaCoeff);
 
