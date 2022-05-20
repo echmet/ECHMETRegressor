@@ -1,11 +1,11 @@
 #ifndef ECHMET_REGRESS_H
 #define ECHMET_REGRESS_H
 
-#include "regress_tracing.h"
-
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
+
+#include "regress_tracing.h"
 
 #include <cmath>
 #include <limits>
