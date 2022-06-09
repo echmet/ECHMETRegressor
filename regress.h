@@ -156,7 +156,7 @@ public:
 		return m_x;
 	}
 
-	const YTMatrix & GetYs() const
+	const YTVector& GetYs() const
 	{
 		return m_y;
 	}
